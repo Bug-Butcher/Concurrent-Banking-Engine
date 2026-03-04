@@ -82,8 +82,8 @@ flowchart TD
 ======= FINAL SUMMARY =======
 Account: A101 | Holder: rakesh | Balance: 10.00
 Account: A102 | Holder: suresh | Balance: 10.00
-Account: A103 | Holder: ramesh | Balance: 4710.00
-TOTAL BANK BALANCE: ...
+Account: A103 | Holder: ramesh | Balance: 4730.00
+TOTAL BANK BALANCE: ...₹4730.00
 ```
 
 ## Future Improvements
@@ -97,3 +97,5 @@ TOTAL BANK BALANCE: ...
 
 Shubh Jaiswal  
 Computer Science Student | Backend and Java Enthusiast
+
+
