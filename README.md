@@ -1,178 +1,99 @@
-# 💳 Concurrent Banking System (Java)
+# Concurrent Banking System (Java)
 
-A multi-threaded banking engine built in Java to simulate real-world financial transactions under heavy concurrent load.
+A multithreaded banking simulator built in Java that models deposits, withdrawals, and transfers under concurrent load.
 
-This project focuses on **thread safety, data consistency, and stress testing** rather than UI.
+The project is focused on concurrency safety, transaction consistency, and stress-style execution.
 
----
-
-  <p align="center">
+<p align="center">
   <img src="https://img.shields.io/badge/Java-21-blue" />
   <img src="https://img.shields.io/badge/Concurrency-Thread%20Safe-success" />
   <img src="https://img.shields.io/badge/Stress%20Test-10k%2B%20Ops-brightgreen" />
   <img src="https://img.shields.io/badge/Architecture-Layered%20Design-blueviolet" />
 </p>
 
+## Features
 
-## 🚀 Features
+- Thread-safe deposit, withdrawal, and transfer operations
+- Concurrent execution using `ExecutorService`
+- Deadlock-safe transfer locking strategy (ordered account locking)
+- Transaction history tracking per account
+- Final summary with total balance validation
+- Custom exceptions for invalid input and business rule failures
 
-- ✅ Thread-safe Deposit, Withdrawal, and Transfer operations
-- ✅ ExecutorService-based concurrent processing
-- ✅ 10,000+ operations stress tested
-- ✅ Random latency simulation (real-world behavior)
-- ✅ Prevents negative balances
-- ✅ Handles insufficient balance gracefully
-- ✅ Transaction history tracking per account
-- ✅ Sorted transaction logs by transaction ID
-- ✅ Final bank balance consistency validation
-
----
-
-## 🏗 Tech Stack
+## Tech Stack
 
 - Java
-- ExecutorService
-- ThreadLocalRandom
-- Custom Exception Handling
-- Synchronized Blocks (Concurrency Control)
+- `ExecutorService`
+- `AtomicLong`
+- `synchronized` blocks for critical sections
+- Custom exception classes
 
----
+## Project Structure
 
-## 🧠 Concurrency Design
-
-- All balance-modifying operations are synchronized
-- Transfer operations are atomic
-- Failed transactions do not affect system state
-- Random delays simulate real-world network latency
-- No race conditions observed under heavy load
-
----
-
-## 🔥 Stress Test Configuration
-
-- Thread Pool: 5–10 threads
-- Operations: 10,000+
-- Random delays: 1–9ms per operation
-
-Each iteration performs:
-- Deposit
-- Withdrawal
-- Transfer between accounts
-- Failed withdrawal simulation
-
----
-
-## 📊 Sample Output (Final Summary)
-```
-======= FINAL SUMMARY =======
-
-Account: A101 | Holder: rakesh | Balance: ₹10.00
-Account: A102 | Holder: suresh | Balance: ₹10.00
-Account: A103 | Holder: ramesh | Balance: ₹4710.00
+```text
+src/
+  Main.java
+  Service/
+    BankServices.java
+  Model/
+    Account.java
+    Transaction.java
+    TransactionStatus.java
+    TransactionType.java
+  Exception/
+    AccountNotFoundException.java
+    DuplicateAccountException.java
+    insufficientBalanceException.java
+    InvalidAmountException.java
+  Task/
+    UserTask.java
 ```
 
+## Concurrency Design
 
+- Balance-modifying operations are synchronized on account objects.
+- Transfers lock both accounts in deterministic order to prevent deadlocks.
+- Transaction IDs are generated with `AtomicLong`.
+- Failed operations are recorded with failure status and reason.
 
-✔ No negative balances  
-✔ No corrupted data  
-✔ No deadlocks  
-✔ Total bank balance remains consistent
-
----
-
-## 📈 What This Project Demonstrates
-
-- Strong understanding of multi-threading
-- Handling race conditions
-- Maintaining financial invariants
-- Atomic transaction handling
-- Concurrent system testing
-- Backend-focused engineering mindset
-
----
-
-## 📂 Project Structure
-```
-├── Main.java
-├── Service/
-│   └── BankServices.java
-├── Model/
-│   ├── Account.java
-│   ├── Transaction.java
-│   ├── TransactionType.java
-│   └── TransactionStatus.java
-├── Exception/
-│   ├── InvalidAmountException.java
-│   ├── InsufficientBalanceException.java
-│   ├── DuplicateAccountException.java
-│   └── AccountNotFoundException.java
-├── Task/
-│   └── UserTask.java
-
-```
-
-
-## 🏗 Architecture Overview
-
-The system follows a layered, service-oriented structure:
+## Architecture Overview
 
 ```mermaid
-    A[Main] --> B[ExecutorService Thread Pool]
-    B --> C[UserTask (Runnable)]
-    C --> D[BankServices]
+flowchart TD
+  A[Main] --> B[ExecutorService Thread Pool]
+  B --> C[Submitted Banking Tasks]
+  C --> D[BankServices]
 
-    D --> E[Account Model]
-    D --> F[Transaction Model]
-
-    D --> G[TransactionType Enum]
-    D --> H[TransactionStatus Enum]
-
-    D --> I[Custom Exceptions]
-    I --> I1[InvalidAmountException]
-    I --> I2[InsufficientBalanceException]
-    I --> I3[DuplicateAccountException]
-    I --> I4[AccountNotFoundException]
+  D --> E[Account Model]
+  D --> F[Transaction Model]
+  D --> G[TransactionType / TransactionStatus]
+  D --> H[Custom Exceptions]
 ```
 
-### 🔎 Flow Explanation
+## How To Run
 
-1. **Main** initializes accounts and thread pool.
-2. **ExecutorService** runs concurrent banking operations.
-3. **UserTask** encapsulates transaction logic.
-4. **BankServices** handles all business logic.
-5. **Models & Enums** maintain structured transaction data.
-6. **Custom Exceptions** ensure safe and controlled failure handling.
+1. Open the project.
+2. Set SDK to Java 21 (or your installed Java version if compatible).
+3. Run `src/Main.java`.
 
-This architecture ensures:
-- Clear separation of concerns
-- Thread-safe transaction handling
-- Maintainable and extensible backend design
----
+## Sample Output (Summary)
 
-## 🧪 How To Run
+```text
+======= FINAL SUMMARY =======
+Account: A101 | Holder: rakesh | Balance: 10.00
+Account: A102 | Holder: suresh | Balance: 10.00
+Account: A103 | Holder: ramesh | Balance: 4710.00
+TOTAL BANK BALANCE: ...
+```
 
-1. Clone the repository
-2. Open in IntelliJ / Eclipse
-3. Run `Main.java`
-4. Observe concurrent logs and final summary
+## Future Improvements
 
----
+- Expose operations through a REST API
+- Replace coarse synchronization with `ReentrantLock` where appropriate
+- Add benchmark metrics (throughput and latency)
+- Add automated tests for concurrency invariants
 
-## 🎯 Future Improvements
-
-- Convert to Spring Boot REST API(not-confirmed)
-- Replace synchronized with ReentrantLock
-- Add performance benchmarking (ops/sec)
-
-- Add REST-level concurrent API testing(not-confirmed)
-
----
-
-## 👨‍💻 Author
+## Author
 
 Shubh Jaiswal  
-Computer Science Student | Backend & Java Enthusiast
-
----
-
-If you found this project interesting, feel free to connect or provide feedback!
+Computer Science Student | Backend and Java Enthusiast
